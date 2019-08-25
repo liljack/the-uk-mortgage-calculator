@@ -1,6 +1,6 @@
 module UKMortgageCalculator
 
-  class OverpaymentCalculator
+  class DegressiveOverpaymentCalculator
 
     extend Forwardable
 
@@ -11,7 +11,7 @@ module UKMortgageCalculator
       @overpayment_rate = overpayment_rate
     end
 
-    def_delegators :@monthly_repayment_calculator, :monthly_payment, :mortgage_balance
+    def_delegators :@monthly_repayment_calculator, :monthly_payment, :balance_left
 
     
 
@@ -34,8 +34,8 @@ module UKMortgageCalculator
     end
 
     def calculated_overpayment_for_year
-      puts "the mortgage_balance is: #{mortgage_balance}"
-      @monthly_repayment_calculator.mortgage_balance / overpayment_rate
+      puts "the balance_left is: #{balance_left}"
+      @monthly_repayment_calculator.balance_left / overpayment_rate
     end
 
   end
