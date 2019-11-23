@@ -7,8 +7,7 @@ require './lib/uk_mortgage_calculator'
 
 # METHODS
 def set_variables(argv)
-  @mortgage_detail = UKMortgageCalculator::MortgageDetail.new(argv[0].to_f, argv[1].to_f, argv[2].to_i)
-  @monthly_repayment_calculator = UKMortgageCalculator::MonthlyRepaymentCalculator.new(@mortgage_detail)
+  @monthly_repayment_calculator = UKMortgageCalculator::MonthlyRepaymentCalculator.new(argv[0].to_f, argv[1].to_f, argv[2].to_i)
   if argv[3]
     @overpayment = UKMortgageCalculator::OverpaymentCalculator.new(@monthly_repayment_calculator, argv[3].to_f) unless argv[4]
     @overpayment = UKMortgageCalculator::DegressiveOverpaymentCalculator.new(@monthly_repayment_calculator, argv[3].to_f) if argv[4]
@@ -26,7 +25,7 @@ if ARGV.length < 3
 end
 
 def year_range
-  mortgage_term_in_year = (@mortgage_detail.repayment_term / 12).ceil
+  mortgage_term_in_year = (@monthly_repayment_calculator.repayment_term / 12).ceil
   1..mortgage_term_in_year
 end
 
@@ -52,7 +51,7 @@ puts "---------------------------------------"
   end
   (1..12).each do |month|
     puts "Balance:  #{@monthly_repayment_calculator.balance_left}"
-    this_month_interest = @monthly_repayment_calculator.monthly_interest_for_current_month(Date.new((Date.today.year + year - 1), month, 1)).round(2)
+    this_month_interest = @monthly_repayment_calculator.monthly_interest_for_month(Date.new((Date.today.year + year - 1), month, 1)).round(2)
     this_month_payment = monthly_payment + (@overpayment ? @overpayment.monthly_overpayment_amount : 0)
     this_month_payment = ((this_month_payment > @monthly_repayment_calculator.balance_left) ? @monthly_repayment_calculator.balance_left : this_month_payment)
     puts "Balance left: #{@monthly_repayment_calculator.balance_left}"

@@ -5,11 +5,14 @@ module UKMortgageCalculator
     extend Forwardable
     include MethodHelper
 
-    def initialize(mortgage_balance, interest_rate, repayment_term, mortgage_start_date=Date.today)
-      @mortgage_detail = MortgageDetail.new(mortgage_balance, interest_rate, repayment_term, mortgage_start_date)
+    attr_reader :balance_left
+
+    def initialize(mortgage_balance, interest_rate, repayment_term)
+      @mortgage_detail = MortgageDetail.new(mortgage_balance, interest_rate, repayment_term)
+      @balance_left = @mortgage_detail.mortgage_balance
     end
 
-    def_delegators :@mortgage_detail, :mortgage_balance, :interest_rate, :repayment_term, :start_date
+    def_delegators :@mortgage_detail, :mortgage_balance, :interest_rate, :repayment_term
 
     def monthly_payment
       calculated_monthly_payment
@@ -19,20 +22,18 @@ module UKMortgageCalculator
       daily_interest(date) * MethodHelper.days_in_month(date.year, date.month)
     end
 
-    def monthly_payment_after_interest(date)
-      calculated_monthly_payment - monthly_interest_for_month(date)
-    end
-
-    def balance_left_for_date(date)
-      (start_date..date).each do |month|
-        puts month
+    def balance_left=(value)
+      if value < 0
+        @balance_left = 0
+      else
+        @balance_left = value.round(2)
       end
     end
 
     private
 
     def daily_interest(date)
-      (balance_left_for_date(date) * interest_rate / MethodHelper.number_of_days_in_year(date.year))
+      (balance_left * interest_rate / MethodHelper.number_of_days_in_year(date.year))
     end
 
     def calculated_monthly_payment
