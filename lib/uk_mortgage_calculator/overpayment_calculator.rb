@@ -6,12 +6,13 @@ module UKMortgageCalculator
 
     attr_accessor :overpayment_rate
 
-    def initialize(monthly_repayment_calculator, overpayment_rate)
+    def initialize(monthly_repayment_calculator, overpayment_rate, degressive = false)
       @monthly_repayment_calculator = monthly_repayment_calculator
       @overpayment_rate = overpayment_rate
+      @degressive = degressive
     end
 
-    def_delegators :@monthly_repayment_calculator, :monthly_payment, :mortgage_balance
+    def_delegators :@monthly_repayment_calculator, :monthly_payment, :mortgage_balance, :balance_left
 
     
 
@@ -34,8 +35,11 @@ module UKMortgageCalculator
     end
 
     def calculated_overpayment_for_year
-      puts "the mortgage_balance is: #{mortgage_balance}"
-      @monthly_repayment_calculator.mortgage_balance / overpayment_rate
+      if @degressive
+        @monthly_repayment_calculator.balance_left * (overpayment_rate / 100)
+      else
+        @monthly_repayment_calculator.mortgage_balance * (overpayment_rate / 100)
+      end
     end
 
   end
