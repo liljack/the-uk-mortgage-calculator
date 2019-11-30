@@ -9,8 +9,7 @@ require './lib/uk_mortgage_calculator'
 def set_variables(argv)
   @monthly_repayment_calculator = UKMortgageCalculator::MonthlyRepaymentCalculator.new(argv[0].to_f, argv[1].to_f, argv[2].to_i)
   if argv[3]
-    @overpayment = UKMortgageCalculator::OverpaymentCalculator.new(@monthly_repayment_calculator, argv[3].to_f) unless argv[4]
-    @overpayment = UKMortgageCalculator::DegressiveOverpaymentCalculator.new(@monthly_repayment_calculator, argv[3].to_f) if argv[4]
+    @overpayment = UKMortgageCalculator::OverpaymentCalculator.new(@monthly_repayment_calculator, argv[3].to_f, argv[4] ? true : false)
   end
 end
 
