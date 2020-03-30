@@ -1,6 +1,6 @@
 module UKMortgageCalculator
 
-  class MonthlyRepaymentCalculator
+  class RepaymentCalculator
     
     extend Forwardable
     include MethodHelper
@@ -15,7 +15,7 @@ module UKMortgageCalculator
     def_delegators :@mortgage_detail, :mortgage_balance, :interest_rate, :repayment_term
 
     def monthly_payment
-      calculated_monthly_payment
+      @monthly_payment ||= calculated_monthly_payment
     end
 
     def monthly_interest_for_month(date)
@@ -23,7 +23,7 @@ module UKMortgageCalculator
     end
 
     def balance_left=(value)
-      if value < 0
+      if value <= 0
         @balance_left = 0
       else
         @balance_left = value.round(2)
